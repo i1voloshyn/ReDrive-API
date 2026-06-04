@@ -2,8 +2,7 @@ package dev.ivanvoloshyn.redriveapi.security;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class Pbkdf2PasswordHasherTest {
     @Test
@@ -29,6 +28,17 @@ class Pbkdf2PasswordHasherTest {
         boolean matches = passwordHasher.matches("WrongPassword", storedHash);
 
         assertFalse(matches);
+    }
+
+    @Test
+    void hash_ShouldCreateDifferentHash_ForSamePassword(){
+        PasswordHasher passwordHasher = new Pbkdf2PasswordHasher();
+        String rawPassword = "Test123!@";
+
+        String firstHash = passwordHasher.hash(rawPassword);
+        String secondHash = passwordHasher.hash(rawPassword);
+
+        assertNotEquals(firstHash, secondHash);
     }
 
 }

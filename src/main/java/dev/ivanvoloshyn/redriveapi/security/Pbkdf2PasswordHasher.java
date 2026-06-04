@@ -15,9 +15,8 @@ public class Pbkdf2PasswordHasher implements PasswordHasher {
     private final SecureRandom secureRandom = new SecureRandom();
 
     @Override
-    public String hash(String password) {
+    public String hash(String rawPassword) {
         byte[] salt = generateSalt();
-        byte[] hashedPassword;
 
         PasswordHashParameters parameters = new PasswordHashParameters(
                 ALGORITHM,
@@ -26,7 +25,7 @@ public class Pbkdf2PasswordHasher implements PasswordHasher {
                 salt
         );
 
-        hashedPassword = hashPassword(password, parameters);
+        byte[] hashedPassword = hashPassword(rawPassword, parameters);
 
         return encodeStoredPassword(hashedPassword, parameters);
     }
@@ -35,8 +34,11 @@ public class Pbkdf2PasswordHasher implements PasswordHasher {
     public boolean matches(String rawPassword, String storedPassword) {
         StoredPassword parsed = parseStoredPassword(storedPassword);
 
-        PasswordHashParameters parameters = new PasswordHashParameters(parsed.algorithm(), parsed.iterations(),
-                parsed.keyLength(), parsed.salt());
+        PasswordHashParameters parameters = new PasswordHashParameters(
+                parsed.algorithm(),
+                parsed.iterations(),
+                parsed.keyLength(),
+                parsed.salt());
 
         byte[] hash = hashPassword(rawPassword, parameters);
 
