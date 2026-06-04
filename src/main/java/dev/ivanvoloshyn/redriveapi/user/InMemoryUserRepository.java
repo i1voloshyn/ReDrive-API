@@ -25,8 +25,11 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public UserResponse save(User user) {
-        return null;
+    public User save(User user) {
+        user.setId(idGenerator.getAndIncrement());
+        users.put(user.getEmail(), user);
+
+        return users.get(user.getEmail());
     }
 
 }
