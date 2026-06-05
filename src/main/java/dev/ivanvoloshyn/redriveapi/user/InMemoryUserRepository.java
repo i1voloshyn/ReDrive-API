@@ -1,12 +1,10 @@
 package dev.ivanvoloshyn.redriveapi.user;
 
 import dev.ivanvoloshyn.redriveapi.user.model.User;
-import dev.ivanvoloshyn.redriveapi.user.model.UserResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Component
@@ -17,11 +15,6 @@ public class InMemoryUserRepository implements UserRepository {
     @Override
     public boolean existsByEmail(String email) {
         return users.containsKey(email);
-    }
-
-    @Override
-    public Optional<User> findByEmail(String email) {
-        return Optional.empty();
     }
 
     @Override

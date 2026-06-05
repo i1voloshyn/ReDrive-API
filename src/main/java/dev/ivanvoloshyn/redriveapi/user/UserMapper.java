@@ -6,7 +6,6 @@ import dev.ivanvoloshyn.redriveapi.user.model.UserResponse;
 
 public final class UserMapper {
     private UserMapper() {
-
     }
 
     public static User toUser(RegisterUserRequest registerUserRequest, String passwordHash) {
