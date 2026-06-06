@@ -1,3 +1,20 @@
 spring:
   application:
     name: ReDrive-API
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/redrive
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show-sql: true
+    open-in-view: false
+
+server:
+  port: 8088
+
