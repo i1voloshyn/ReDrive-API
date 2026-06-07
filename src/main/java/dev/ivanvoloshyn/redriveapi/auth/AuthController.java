@@ -1,8 +1,12 @@
-package dev.ivanvoloshyn.redriveapi.user;
+package dev.ivanvoloshyn.redriveapi.auth;
 
+import dev.ivanvoloshyn.redriveapi.auth.model.LoginRequest;
+import dev.ivanvoloshyn.redriveapi.auth.model.LoginResponse;
+import dev.ivanvoloshyn.redriveapi.user.UserService;
 import dev.ivanvoloshyn.redriveapi.user.model.RegisterUserRequest;
 import dev.ivanvoloshyn.redriveapi.user.model.UserResponse;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,18 +15,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/users")
-public class UserController {
+@RequestMapping("/api/auth")
+@RequiredArgsConstructor
+public class AuthController {
 
     private final UserService userService;
+    private final AuthService authService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
     @PostMapping("/register")
     public ResponseEntity<UserResponse> register(@Valid @RequestBody RegisterUserRequest request) {
         UserResponse response = userService.registerUser(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+        LoginResponse response = authService.login(request);
+        return ResponseEntity.ok(response);
     }
 
 }

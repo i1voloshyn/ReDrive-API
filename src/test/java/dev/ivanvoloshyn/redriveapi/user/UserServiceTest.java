@@ -1,9 +1,7 @@
-package dev.ivanvoloshyn.redriveapi.user.service;
+package dev.ivanvoloshyn.redriveapi.user;
 
 import dev.ivanvoloshyn.redriveapi.security.PasswordHasher;
-import dev.ivanvoloshyn.redriveapi.user.UserRepository;
 import dev.ivanvoloshyn.redriveapi.exception.UserAlreadyExistsException;
-import dev.ivanvoloshyn.redriveapi.user.UserService;
 import dev.ivanvoloshyn.redriveapi.user.model.RegisterUserRequest;
 import dev.ivanvoloshyn.redriveapi.user.model.User;
 import dev.ivanvoloshyn.redriveapi.user.model.UserResponse;
