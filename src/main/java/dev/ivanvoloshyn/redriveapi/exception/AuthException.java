@@ -1,4 +1,4 @@
-package dev.ivanvoloshyn.redriveapi.user.exception;
+package dev.ivanvoloshyn.redriveapi.exception;
 
 public abstract class AuthException extends RuntimeException {
     protected AuthException(String message) {

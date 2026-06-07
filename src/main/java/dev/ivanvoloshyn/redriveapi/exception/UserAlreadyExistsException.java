@@ -1,4 +1,4 @@
-package dev.ivanvoloshyn.redriveapi.user.exception;
+package dev.ivanvoloshyn.redriveapi.exception;
 
 public class UserAlreadyExistsException extends AuthException {
     public UserAlreadyExistsException(String email) {
