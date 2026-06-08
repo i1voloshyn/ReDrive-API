@@ -1,18 +1,20 @@
 package dev.ivanvoloshyn.redriveapi.auth;
 
+import dev.ivanvoloshyn.redriveapi.auth.model.ChangePasswordRequest;
 import dev.ivanvoloshyn.redriveapi.auth.model.LoginRequest;
 import dev.ivanvoloshyn.redriveapi.auth.model.LoginResponse;
 import dev.ivanvoloshyn.redriveapi.exception.InvalidCredentialsException;
 import dev.ivanvoloshyn.redriveapi.security.PasswordHasher;
 import dev.ivanvoloshyn.redriveapi.user.UserRepository;
 import dev.ivanvoloshyn.redriveapi.user.model.User;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    private static final String ERROR_INVALID_CREDENTIALS = "Invalid email or password";
+    private static final String ERROR_INVALID_CREDENTIALS = "Invalid credentials";
 
     private final UserRepository userRepository;
     private final PasswordHasher passwordHasher;
@@ -20,11 +22,26 @@ public class AuthService {
     public LoginResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new InvalidCredentialsException(ERROR_INVALID_CREDENTIALS));
+
         if (!passwordHasher.matches(request.password(), user.getPasswordHash())) {
             throw new InvalidCredentialsException(ERROR_INVALID_CREDENTIALS);
         }
 
         return new LoginResponse("Login successful");
+    }
+
+    @Transactional
+    public void changePassword(ChangePasswordRequest request) {
+        User user = userRepository.findByEmail(request.email())
+                .orElseThrow(() -> new InvalidCredentialsException(ERROR_INVALID_CREDENTIALS));
+
+        if (!passwordHasher.matches(request.oldPassword(), user.getPasswordHash())) {
+            throw new InvalidCredentialsException(ERROR_INVALID_CREDENTIALS);
+        }
+
+        String newPassword = passwordHasher.hash(request.newPassword());
+
+        user.setPasswordHash(newPassword);
     }
 
 }
