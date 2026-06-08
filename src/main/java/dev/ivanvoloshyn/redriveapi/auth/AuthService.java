@@ -27,5 +27,4 @@ public class AuthService {
         return new LoginResponse("Login successful");
     }
 
-
 }
