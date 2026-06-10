@@ -10,7 +10,8 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "users")
+@Table(name = "users",
+        indexes = {@Index(name = "idx_user_email", columnList = "email")})
 @Entity
 public class User {
     @Id
@@ -18,10 +19,10 @@ public class User {
     private Long id;
     @Column(nullable = false, unique = true)
     private String email;
-    @Column(name = "first_name",nullable = false)
+    @Column(name = "first_name", nullable = false)
     private String firstName;
-    @Column(name = "last_name",nullable = false)
+    @Column(name = "last_name", nullable = false)
     private String lastName;
-    @Column(name = "password_hash",nullable = false)
+    @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 }
