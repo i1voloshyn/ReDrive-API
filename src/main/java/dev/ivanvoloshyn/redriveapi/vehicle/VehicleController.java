@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/users/{userId}/vehicles")
 @RequiredArgsConstructor
@@ -20,6 +22,12 @@ public class VehicleController {
                                                       @Valid @RequestBody VehicleRequest vehicleRequest) {
         VehicleResponse response = vehicleService.createVehicle(userId, vehicleRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<VehicleResponse>> getAllVehicles(@PathVariable Long userId) {
+        List<VehicleResponse> vehicles = vehicleService.getUserVehicles(userId);
+        return ResponseEntity.ok(vehicles);
     }
 
 }

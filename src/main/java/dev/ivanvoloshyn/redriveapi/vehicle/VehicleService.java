@@ -9,6 +9,8 @@ import dev.ivanvoloshyn.redriveapi.vehicle.model.VehicleResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class VehicleService {
@@ -25,6 +27,16 @@ public class VehicleService {
         Vehicle savedVehicle = vehicleRepository.save(vehicle);
 
         return VehicleMapper.toVehicleResponse(savedVehicle);
+    }
+
+    public List<VehicleResponse> getUserVehicles(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new UserNotFoundException(userId);
+        }
+
+        return vehicleRepository.findAllByUser_id(userId).stream()
+                .map(VehicleMapper::toVehicleResponse)
+                .toList();
     }
 
 }

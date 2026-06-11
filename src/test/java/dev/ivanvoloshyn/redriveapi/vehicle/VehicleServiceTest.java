@@ -13,9 +13,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Instant;
 import java.time.Year;
+import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.ArgumentMatchers.any;
@@ -79,6 +82,61 @@ class VehicleServiceTest {
         assertEquals(savedVehicle.getId(), response.id());
         assertEquals(request.model(), savedVehicle.getModel());
         assertEquals(request.type(), savedVehicle.getType());
+    }
+
+    @Test
+    void getUserVehicles_shouldReturnAllVehicles_forCurrentUser() {
+        Long userId = 1L;
+        User user = new User(
+                userId,
+                "Joe",
+                "Toronto",
+                "test_email@email.com",
+                "user_password"
+        );
+        Instant createdAt1 = Instant.parse("2026-06-11T10:00:00Z");
+        Vehicle vehicle1 = Vehicle.builder()
+                .id(1)
+                .brand("Seat")
+                .model("Leon")
+                .type(VehicleType.CAR)
+                .initialOdometerValue(123456)
+                .user(user)
+                .createdAt(createdAt1)
+                .build();
+
+        Instant createdAt2 = Instant.parse("2026-06-10T10:00:00Z");
+        Vehicle vehicle2 = Vehicle.builder()
+                .id(2)
+                .brand("Volvo")
+                .model("V40")
+                .type(VehicleType.CAR)
+                .initialOdometerValue(234567)
+                .user(user)
+                .createdAt(createdAt2)
+                .build();
+
+        List<Vehicle> entities = List.of(vehicle1, vehicle2);
+
+        when(userRepository.existsById(userId)).thenReturn(true);
+        when(vehicleRepository.findAllByUser_id(userId)).thenReturn(entities);
+
+        List<VehicleResponse> vehicleResponses = vehicleService.getUserVehicles(userId);
+
+        verify(userRepository).existsById(userId);
+        verify(vehicleRepository).findAllByUser_id(userId);
+
+        assertThat(vehicleResponses)
+                .extracting(
+                        VehicleResponse::id,
+                        VehicleResponse::brand,
+                        VehicleResponse::model,
+                        VehicleResponse::createdAt)
+                .containsExactlyInAnyOrder(
+                        tuple(1, "Seat", "Leon", createdAt1),
+                        tuple(2, "Volvo", "V40", createdAt2));
+
+
     }
 
 }
