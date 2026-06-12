@@ -34,7 +34,7 @@ public class VehicleService {
             throw new UserNotFoundException(userId);
         }
 
-        return vehicleRepository.findAllByUser_id(userId).stream()
+        return vehicleRepository.findAllByUser_Id(userId).stream()
                 .map(VehicleMapper::toVehicleResponse)
                 .toList();
     }

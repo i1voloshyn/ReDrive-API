@@ -1,5 +1,6 @@
 package dev.ivanvoloshyn.redriveapi.vehicle;
 
+import dev.ivanvoloshyn.redriveapi.exception.UserNotFoundException;
 import dev.ivanvoloshyn.redriveapi.user.UserRepository;
 import dev.ivanvoloshyn.redriveapi.user.model.User;
 import dev.ivanvoloshyn.redriveapi.vehicle.model.Vehicle;
@@ -20,10 +21,10 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class VehicleServiceTest {
@@ -80,8 +81,8 @@ class VehicleServiceTest {
 
         //assert response
         assertEquals(savedVehicle.getId(), response.id());
-        assertEquals(request.model(), savedVehicle.getModel());
-        assertEquals(request.type(), savedVehicle.getType());
+        assertEquals(request.model(), response.model());
+        assertEquals(request.type(), response.type());
     }
 
     @Test
@@ -119,12 +120,12 @@ class VehicleServiceTest {
         List<Vehicle> entities = List.of(vehicle1, vehicle2);
 
         when(userRepository.existsById(userId)).thenReturn(true);
-        when(vehicleRepository.findAllByUser_id(userId)).thenReturn(entities);
+        when(vehicleRepository.findAllByUser_Id(userId)).thenReturn(entities);
 
         List<VehicleResponse> vehicleResponses = vehicleService.getUserVehicles(userId);
 
         verify(userRepository).existsById(userId);
-        verify(vehicleRepository).findAllByUser_id(userId);
+        verify(vehicleRepository).findAllByUser_Id(userId);
 
         assertThat(vehicleResponses)
                 .extracting(
@@ -136,6 +137,36 @@ class VehicleServiceTest {
                         tuple(1, "Seat", "Leon", createdAt1),
                         tuple(2, "Volvo", "V40", createdAt2));
 
+
+    }
+
+    @Test
+    void getUserVehicles_shouldReturnEmptyList_whenUserHasNoVehicles() {
+        Long userId = 1L;
+
+        when(userRepository.existsById(userId)).thenReturn(true);
+        when(vehicleRepository.findAllByUser_Id(userId)).thenReturn(List.of());
+
+        List<VehicleResponse> vehicleResponses = vehicleService.getUserVehicles(userId);
+
+        verify(userRepository).existsById(userId);
+        verify(vehicleRepository).findAllByUser_Id(userId);
+
+        assertThat(vehicleResponses).isEmpty();
+    }
+
+    @Test
+    void getUserVehicles_shouldThrowUserNotFoundException_whenUserDoesNotExist() {
+        Long userId = 1L;
+        when(userRepository.existsById(userId)).thenReturn(false);
+
+        UserNotFoundException e = assertThrows(UserNotFoundException.class,
+                () -> vehicleService.getUserVehicles(userId));
+
+        verify(userRepository).existsById(userId);
+        verifyNoInteractions(vehicleRepository);
+
+        assertThat(e).hasMessage("User with Id " + userId + " not found");
 
     }
 
