@@ -39,4 +39,11 @@ public class VehicleService {
                 .toList();
     }
 
+    public void deleteVehicle(Long userId, Long vehicleId) {
+        if (!userRepository.existsById(userId)) {
+            throw new UserNotFoundException(userId);
+        }
+        vehicleRepository.deleteById(vehicleId);
+    }
+
 }

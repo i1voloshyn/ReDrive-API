@@ -30,4 +30,10 @@ public class VehicleController {
         return ResponseEntity.ok(vehicles);
     }
 
+    @DeleteMapping("/{vehicleId}")
+    public ResponseEntity<Void> deleteVehicle(@PathVariable Long userId, @PathVariable Long vehicleId) {
+        vehicleService.deleteVehicle(userId, vehicleId);
+        return ResponseEntity.noContent().build();
+    }
+
 }
