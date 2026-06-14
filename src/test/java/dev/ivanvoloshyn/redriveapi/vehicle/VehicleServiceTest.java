@@ -50,13 +50,9 @@ class VehicleServiceTest {
                 "user_password"
         );
 
-        VehicleRequest request = VehicleRequest.builder()
-                .brand("Seat")
-                .model("Leon 1P1")
-                .type(VehicleType.CAR)
-                .productionYear(Year.of(2005))
-                .initialOdometerValue(214_534)
-                .build();
+        VehicleRequest request = new VehicleRequest(
+                "Seat", "Leon 1P1", VehicleType.CAR, Year.of(2005), 214_534
+        );
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
@@ -135,9 +131,8 @@ class VehicleServiceTest {
                         VehicleResponse::model,
                         VehicleResponse::createdAt)
                 .containsExactlyInAnyOrder(
-                        tuple(1, "Seat", "Leon", createdAt1),
-                        tuple(2, "Volvo", "V40", createdAt2));
-
+                        tuple(1L, "Seat", "Leon", createdAt1),
+                        tuple(2L, "Volvo", "V40", createdAt2));
 
     }
 
