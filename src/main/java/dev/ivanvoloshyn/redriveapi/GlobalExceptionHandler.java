@@ -1,8 +1,8 @@
 package dev.ivanvoloshyn.redriveapi;
 
-import dev.ivanvoloshyn.redriveapi.exception.InvalidCredentialsException;
-import dev.ivanvoloshyn.redriveapi.exception.UserAlreadyExistsException;
-import dev.ivanvoloshyn.redriveapi.exception.UserNotFoundException;
+import dev.ivanvoloshyn.redriveapi.exception.auth.InvalidCredentialsException;
+import dev.ivanvoloshyn.redriveapi.exception.auth.UserAlreadyExistsException;
+import dev.ivanvoloshyn.redriveapi.exception.auth.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

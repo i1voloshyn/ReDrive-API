@@ -1,7 +1,7 @@
 package dev.ivanvoloshyn.redriveapi.user;
 
 import dev.ivanvoloshyn.redriveapi.security.PasswordHasher;
-import dev.ivanvoloshyn.redriveapi.exception.UserAlreadyExistsException;
+import dev.ivanvoloshyn.redriveapi.exception.auth.UserAlreadyExistsException;
 import dev.ivanvoloshyn.redriveapi.user.model.RegisterUserRequest;
 import dev.ivanvoloshyn.redriveapi.user.model.User;
 import dev.ivanvoloshyn.redriveapi.user.model.UserResponse;

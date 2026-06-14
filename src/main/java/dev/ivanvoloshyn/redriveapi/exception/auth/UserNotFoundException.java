@@ -1,4 +1,4 @@
-package dev.ivanvoloshyn.redriveapi.exception;
+package dev.ivanvoloshyn.redriveapi.exception.auth;
 
 public class UserNotFoundException extends AuthException {
     public UserNotFoundException(Long id) {

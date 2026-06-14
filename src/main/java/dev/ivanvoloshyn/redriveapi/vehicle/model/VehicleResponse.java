@@ -7,7 +7,7 @@ import java.time.Year;
 
 @Builder
 public record VehicleResponse(
-        int id,
+        Long id,
         String brand,
         String model,
         VehicleType type,

@@ -1,6 +1,7 @@
 package dev.ivanvoloshyn.redriveapi.vehicle;
 
-import dev.ivanvoloshyn.redriveapi.exception.UserNotFoundException;
+import dev.ivanvoloshyn.redriveapi.exception.auth.UserNotFoundException;
+import dev.ivanvoloshyn.redriveapi.exception.VehicleNotFoundException;
 import dev.ivanvoloshyn.redriveapi.user.UserRepository;
 import dev.ivanvoloshyn.redriveapi.user.model.User;
 import dev.ivanvoloshyn.redriveapi.vehicle.model.Vehicle;
@@ -39,7 +40,7 @@ class VehicleServiceTest {
 
     @Test
     void createVehicle_shouldSave_andReturnVehicleResponse() {
-        int vehicleId = 1;
+        Long vehicleId = 1L;
         Long userId = 1L;
         User user = new User(
                 userId,
@@ -97,7 +98,7 @@ class VehicleServiceTest {
         );
         Instant createdAt1 = Instant.parse("2026-06-11T10:00:00Z");
         Vehicle vehicle1 = Vehicle.builder()
-                .id(1)
+                .id(1L)
                 .brand("Seat")
                 .model("Leon")
                 .type(VehicleType.CAR)
@@ -108,7 +109,7 @@ class VehicleServiceTest {
 
         Instant createdAt2 = Instant.parse("2026-06-10T10:00:00Z");
         Vehicle vehicle2 = Vehicle.builder()
-                .id(2)
+                .id(2L)
                 .brand("Volvo")
                 .model("V40")
                 .type(VehicleType.CAR)
@@ -169,5 +170,58 @@ class VehicleServiceTest {
         assertThat(e).hasMessage("User with Id " + userId + " not found");
 
     }
+
+    @Test
+    void deleteVehicle_shouldThrowVehicleNotFoundException_whenVehicleIsNotFoundForUser() {
+        Long vehicleId = 1L;
+        Long userId = 2L;
+
+        when(userRepository.existsById(userId)).thenReturn(true);
+        when(vehicleRepository.findByIdAndUser_Id(vehicleId, userId)).thenReturn(Optional.empty());
+
+        VehicleNotFoundException e = assertThrows(VehicleNotFoundException.class,
+                () -> vehicleService.deleteVehicle(userId, vehicleId));
+
+        verify(userRepository).existsById(userId);
+        verify(vehicleRepository).findByIdAndUser_Id(vehicleId, userId);
+        verify(vehicleRepository, never()).delete(any(Vehicle.class));
+
+        assertThat(e).hasMessage("Vehicle with id " + vehicleId + " and user id " + userId + " not found");
+
+    }
+
+    @Test
+    void deleteVehicle_shouldDeleteVehicle_whenVehicleBelongsToUser() {
+        Long vehicleId = 1L;
+        Long userId = 2L;
+
+        User user = new User(
+                userId,
+                "Joe",
+                "Toronto",
+                "test_email@email.com",
+                "user_password"
+        );
+        Instant createdAt = Instant.parse("2026-06-11T10:00:00Z");
+        Vehicle vehicle = Vehicle.builder()
+                .id(vehicleId)
+                .brand("Seat")
+                .model("Leon")
+                .type(VehicleType.CAR)
+                .initialOdometerValue(123456)
+                .user(user)
+                .createdAt(createdAt)
+                .build();
+
+        when(userRepository.existsById(userId)).thenReturn(true);
+        when(vehicleRepository.findByIdAndUser_Id(vehicleId, userId)).thenReturn(Optional.of(vehicle));
+
+        vehicleService.deleteVehicle(userId, vehicleId);
+
+        verify(userRepository).existsById(userId);
+        verify(vehicleRepository).findByIdAndUser_Id(vehicleId, userId);
+        verify(vehicleRepository).delete(vehicle);
+    }
+
 
 }

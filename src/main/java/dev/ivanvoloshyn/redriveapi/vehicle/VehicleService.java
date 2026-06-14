@@ -1,6 +1,7 @@
 package dev.ivanvoloshyn.redriveapi.vehicle;
 
-import dev.ivanvoloshyn.redriveapi.exception.UserNotFoundException;
+import dev.ivanvoloshyn.redriveapi.exception.auth.UserNotFoundException;
+import dev.ivanvoloshyn.redriveapi.exception.VehicleNotFoundException;
 import dev.ivanvoloshyn.redriveapi.user.UserRepository;
 import dev.ivanvoloshyn.redriveapi.user.model.User;
 import dev.ivanvoloshyn.redriveapi.vehicle.model.Vehicle;
@@ -43,7 +44,9 @@ public class VehicleService {
         if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException(userId);
         }
-        vehicleRepository.deleteById(vehicleId);
+        Vehicle vehicle = vehicleRepository.findByIdAndUser_Id(vehicleId, userId)
+                .orElseThrow(() -> new VehicleNotFoundException(vehicleId, userId));
+        vehicleRepository.delete(vehicle);
     }
 
 }

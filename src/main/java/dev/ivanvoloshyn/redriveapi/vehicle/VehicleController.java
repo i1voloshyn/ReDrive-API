@@ -3,6 +3,7 @@ package dev.ivanvoloshyn.redriveapi.vehicle;
 import dev.ivanvoloshyn.redriveapi.vehicle.model.VehicleRequest;
 import dev.ivanvoloshyn.redriveapi.vehicle.model.VehicleResponse;
 import jakarta.validation.Valid;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,7 @@ import java.util.List;
 @RequestMapping("api/users/{userId}/vehicles")
 @RequiredArgsConstructor
 public class VehicleController {
-
+    @NonNull
     private final VehicleService vehicleService;
 
     @PostMapping
