@@ -16,7 +16,6 @@ public class VehicleMapper {
                 .type(request.type())
                 .initialOdometerValue(request.initialOdometerValue())
                 .productionYear(request.productionYear())
-                .createdAt(Instant.now())
                 .build();
     }
 

@@ -3,6 +3,8 @@ package dev.ivanvoloshyn.redriveapi.vehicle.model;
 import dev.ivanvoloshyn.redriveapi.user.model.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.CreatedBy;
 
 import java.time.Instant;
 import java.time.Year;
@@ -27,5 +29,6 @@ public class Vehicle {
     private VehicleType type;
     private Year productionYear;
     private Integer initialOdometerValue;
+    @CreationTimestamp
     private Instant createdAt;
 }
