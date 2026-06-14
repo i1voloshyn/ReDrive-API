@@ -1,5 +1,6 @@
 package dev.ivanvoloshyn.redriveapi;
 
+import dev.ivanvoloshyn.redriveapi.exception.VehicleNotFoundException;
 import dev.ivanvoloshyn.redriveapi.exception.auth.InvalidCredentialsException;
 import dev.ivanvoloshyn.redriveapi.exception.auth.UserAlreadyExistsException;
 import dev.ivanvoloshyn.redriveapi.exception.auth.UserNotFoundException;
@@ -23,7 +24,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<String> handleUserNotFoundException(UserNotFoundException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
+    @ExceptionHandler(VehicleNotFoundException.class)
+    public ResponseEntity<String> handleVehicleNotFoundException(VehicleNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
 }
