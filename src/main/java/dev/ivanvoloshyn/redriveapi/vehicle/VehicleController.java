@@ -37,4 +37,12 @@ public class VehicleController {
         return ResponseEntity.noContent().build();
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PutMapping("/{vehicleId}")
+    public void updateVehicle(@PathVariable Long userId,
+                              @PathVariable Long vehicleId,
+                              @Valid @RequestBody VehicleRequest vehicleRequest) {
+        vehicleService.updateVehicle(userId, vehicleId, vehicleRequest);
+    }
+
 }

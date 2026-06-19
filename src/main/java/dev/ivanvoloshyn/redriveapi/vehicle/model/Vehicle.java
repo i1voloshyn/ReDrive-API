@@ -4,7 +4,6 @@ import dev.ivanvoloshyn.redriveapi.user.model.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.data.annotation.CreatedBy;
 
 import java.time.Instant;
 import java.time.Year;
@@ -14,11 +13,11 @@ import java.time.Year;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Setter
 @Builder
 public class Vehicle {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Setter()
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -31,4 +30,5 @@ public class Vehicle {
     private Integer initialOdometerValue;
     @CreationTimestamp
     private Instant createdAt;
+
 }

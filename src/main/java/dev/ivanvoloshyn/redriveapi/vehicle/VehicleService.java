@@ -7,6 +7,7 @@ import dev.ivanvoloshyn.redriveapi.user.model.User;
 import dev.ivanvoloshyn.redriveapi.vehicle.model.Vehicle;
 import dev.ivanvoloshyn.redriveapi.vehicle.model.VehicleRequest;
 import dev.ivanvoloshyn.redriveapi.vehicle.model.VehicleResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -41,12 +42,27 @@ public class VehicleService {
     }
 
     public void deleteVehicle(Long userId, Long vehicleId) {
+        Vehicle vehicle = findVehicleById(userId, vehicleId);
+        vehicleRepository.delete(vehicle);
+    }
+
+    @Transactional
+    public void updateVehicle(Long userId, Long vehicleId, VehicleRequest vehicleRequest) {
+        Vehicle vehicle = findVehicleById(userId, vehicleId);
+
+        vehicle.setBrand(vehicleRequest.brand());
+        vehicle.setModel(vehicleRequest.model());
+        vehicle.setType(vehicleRequest.type());
+        vehicle.setInitialOdometerValue(vehicleRequest.initialOdometerValue());
+        vehicle.setProductionYear(vehicleRequest.productionYear());
+    }
+
+    private Vehicle findVehicleById(Long userId, Long vehicleId) {
         if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException(userId);
         }
-        Vehicle vehicle = vehicleRepository.findByIdAndUser_Id(vehicleId, userId)
+        return vehicleRepository.findByIdAndUser_Id(vehicleId, userId)
                 .orElseThrow(() -> new VehicleNotFoundException(vehicleId, userId));
-        vehicleRepository.delete(vehicle);
     }
 
 }
