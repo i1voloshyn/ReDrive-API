@@ -218,5 +218,50 @@ class VehicleServiceTest {
         verify(vehicleRepository).delete(vehicle);
     }
 
+    @Test
+    void updateVehicle_shouldUpdateVehicleSuccessfully_whenVehicleBelongsToUser() {
+        Long vehicleId = 1L;
+        Long userId = 2L;
+        Instant createdAt = Instant.parse("2026-06-11T10:00:00Z");
+
+        User user = new User(
+                userId,
+                "Joe",
+                "Toronto",
+                "test_email@email.com",
+                "user_password"
+        );
+
+        Vehicle existing = Vehicle.builder()
+                .id(vehicleId)
+                .user(user)
+                .brand("Seat")
+                .model("Leon")
+                .type(VehicleType.CAR)
+                .initialOdometerValue(129456)
+                .productionYear(Year.of(2006))
+                .createdAt(createdAt)
+                .build();
+
+        VehicleRequest request = new VehicleRequest(
+                "Seat", "Leon 1P1", VehicleType.CAR,
+                Year.of(2005), 123456
+        );
+
+        when(userRepository.existsById(userId)).thenReturn(true);
+        when(vehicleRepository.findByIdAndUser_Id(vehicleId, userId)).thenReturn(Optional.of(existing));
+
+        vehicleService.updateVehicle(userId, vehicleId, request);
+
+        verify(userRepository).existsById(userId);
+        verify(vehicleRepository).findByIdAndUser_Id(vehicleId, userId);
+
+        assertEquals(existing.getBrand(), request.brand());
+        assertEquals(existing.getModel(), request.model());
+        assertEquals(existing.getType(), request.type());
+        assertEquals(existing.getProductionYear(), request.productionYear());
+        assertEquals(existing.getInitialOdometerValue(), request.initialOdometerValue());
+
+    }
 
 }
