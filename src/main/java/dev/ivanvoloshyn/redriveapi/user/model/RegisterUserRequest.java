@@ -5,20 +5,20 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public record RegisterUserRequest(
-        @NotBlank
-        @Size(min = 2)
+        @NotBlank(message = "First name is required")
+        @Size(min = 2, message = "Size must be min 2 characters")
         String firstName,
 
-        @NotBlank
-        @Size(min = 2)
+        @NotBlank(message = "Last name is required")
+        @Size(min = 2, message = "Size must be min 2 characters")
         String lastName,
 
-        @NotBlank
-        @Email
+        @NotBlank(message = "Email is required")
+        @Email(message = "Email is not valid")
         String email,
 
-        @NotBlank
-        @Size(min = 8)
+        @NotBlank(message = "Password is required")
+        @Size(min = 8, message = "Password is not valid")
         String password
 ) {
 }

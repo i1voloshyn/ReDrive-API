@@ -3,7 +3,7 @@ package dev.ivanvoloshyn.redriveapi.auth;
 import dev.ivanvoloshyn.redriveapi.auth.model.ChangePasswordRequest;
 import dev.ivanvoloshyn.redriveapi.auth.model.LoginRequest;
 import dev.ivanvoloshyn.redriveapi.auth.model.LoginResponse;
-import dev.ivanvoloshyn.redriveapi.exception.auth.InvalidCredentialsException;
+import dev.ivanvoloshyn.redriveapi.exception.model.auth.InvalidCredentialsException;
 import dev.ivanvoloshyn.redriveapi.security.PasswordHasher;
 import dev.ivanvoloshyn.redriveapi.user.UserRepository;
 import dev.ivanvoloshyn.redriveapi.user.model.User;
@@ -18,6 +18,7 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordHasher passwordHasher;
+
 
     public LoginResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.email())

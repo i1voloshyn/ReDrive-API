@@ -1,7 +1,7 @@
 package dev.ivanvoloshyn.redriveapi.user;
 
 import dev.ivanvoloshyn.redriveapi.security.PasswordHasher;
-import dev.ivanvoloshyn.redriveapi.exception.auth.UserAlreadyExistsException;
+import dev.ivanvoloshyn.redriveapi.exception.model.auth.UserAlreadyExistsException;
 import dev.ivanvoloshyn.redriveapi.user.model.RegisterUserRequest;
 import dev.ivanvoloshyn.redriveapi.user.model.User;
 import dev.ivanvoloshyn.redriveapi.user.model.UserResponse;
@@ -30,12 +30,7 @@ class UserServiceTest {
 
     @Test()
     void registerUser_ShouldSaveAndReturn_newUser() {
-        RegisterUserRequest requestUser = new RegisterUserRequest(
-                "User",
-                "UserLastName",
-                "test_email@email.com",
-                "user_password"
-        );
+        RegisterUserRequest requestUser = createRegisterUserRequest();
         String encodedPassword = "encodedPassword";
 
         when(userRepository.existsByEmail(requestUser.email())).thenReturn(false);
@@ -71,21 +66,27 @@ class UserServiceTest {
 
     @Test
     void registerUser_ShouldThrowUserAlreadyExistsException_WhenEmailExists() {
-        RegisterUserRequest requestUser = new RegisterUserRequest(
-                "User",
-                "UserLastName",
-                "test_email@email.com",
-                "user_password"
-        );
+        RegisterUserRequest requestUser = createRegisterUserRequest();
 
         when(userRepository.existsByEmail(requestUser.email())).thenReturn(true);
 
-        UserAlreadyExistsException exc = assertThrows(UserAlreadyExistsException.class, () -> userService.registerUser(requestUser));
+        UserAlreadyExistsException exc = assertThrows(
+                UserAlreadyExistsException.class,
+                () -> userService.registerUser(requestUser));
 
         verify(userRepository).existsByEmail(requestUser.email());
         assertEquals("User already exists with email: test_email@email.com", exc.getMessage());
         verify(passwordHasher, never()).hash(any());
         verify(userRepository, never()).save(any(User.class));
+    }
+
+    private RegisterUserRequest createRegisterUserRequest() {
+        return new RegisterUserRequest(
+                "User",
+                "UserLastName",
+                "test_email@email.com",
+                "user_password"
+        );
     }
 
 }

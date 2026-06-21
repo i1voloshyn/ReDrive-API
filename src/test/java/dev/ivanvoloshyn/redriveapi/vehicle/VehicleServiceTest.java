@@ -1,7 +1,7 @@
 package dev.ivanvoloshyn.redriveapi.vehicle;
 
-import dev.ivanvoloshyn.redriveapi.exception.auth.UserNotFoundException;
-import dev.ivanvoloshyn.redriveapi.exception.VehicleNotFoundException;
+import dev.ivanvoloshyn.redriveapi.exception.model.auth.UserNotFoundException;
+import dev.ivanvoloshyn.redriveapi.exception.model.VehicleNotFoundException;
 import dev.ivanvoloshyn.redriveapi.user.UserRepository;
 import dev.ivanvoloshyn.redriveapi.user.model.User;
 import dev.ivanvoloshyn.redriveapi.vehicle.model.Vehicle;
