@@ -37,6 +37,11 @@ public class ApiExceptionHandler {
         return buildErrorResponse(e.getHttpStatus(), e.getMessage(), request);
     }
 
+    @ExceptionHandler(Throwable.class)
+    public ResponseEntity<ErrorResponse> handleGenericError(Throwable ex, HttpServletRequest request) {
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), request);
+    }
+
     private ResponseEntity<ErrorResponse> buildErrorResponse(HttpStatus httpStatus, String message, HttpServletRequest request) {
         String path = request.getRequestURI();
         return ResponseEntity.status(httpStatus).body(new ErrorResponse(httpStatus.value(), path, message));
