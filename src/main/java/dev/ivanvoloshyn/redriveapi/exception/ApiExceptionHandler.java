@@ -25,7 +25,8 @@ public class ApiExceptionHandler {
                 .stream()
                 .collect(Collectors.toMap(
                         FieldError::getField,
-                        error -> Objects.requireNonNull(error.getDefaultMessage(), "Invalid value"),
+                        error -> error.getDefaultMessage() != null
+                                ? error.getDefaultMessage() : "Invalid value",
                         (first, second) -> second
                 ));
 
