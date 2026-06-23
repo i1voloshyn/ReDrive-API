@@ -10,16 +10,17 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.time.Instant;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException e,
+    public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex,
                                                                    HttpServletRequest request) {
-        String path = request.getRequestURI();
-        Map<String, String> errors = e.getBindingResult()
+
+        Map<String, String> errors = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
                 .collect(Collectors.toMap(
@@ -29,26 +30,28 @@ public class ApiExceptionHandler {
                         (first, second) -> second
                 ));
 
-        return buildErrorResponse(HttpStatus.BAD_REQUEST, path, "Validation failed", errors);
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, "Validation failed", request, errors);
     }
 
     @ExceptionHandler(ApiException.class)
-    public ResponseEntity<ErrorResponse> handleApiException(ApiException e, HttpServletRequest request) {
-        return buildErrorResponse(e.getHttpStatus(), e.getMessage(), request);
+    public ResponseEntity<ErrorResponse> handleApiException(ApiException ex, HttpServletRequest request) {
+        return buildErrorResponse(ex.getHttpStatus(), ex.getMessage(), request, Map.of());
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericError(Exception ex, HttpServletRequest request) {
-        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected server error", request);
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,
+                "Unexpected server error", request, Map.of());
     }
 
-    private ResponseEntity<ErrorResponse> buildErrorResponse(HttpStatus httpStatus, String message, HttpServletRequest request) {
+    private ResponseEntity<ErrorResponse> buildErrorResponse(
+            HttpStatus httpStatus,
+            String message,
+            HttpServletRequest request,
+            Map<String, String> errors
+    ) {
         String path = request.getRequestURI();
-        return ResponseEntity.status(httpStatus).body(new ErrorResponse(httpStatus.value(), path, message));
-    }
-
-    private ResponseEntity<ErrorResponse> buildErrorResponse(HttpStatus status, String path, String message, Map<String, String> errors) {
-        return ResponseEntity.status(status).body(new ErrorResponse(status.value(), path, message, errors));
+        return ResponseEntity.status(httpStatus).body(ErrorResponse.create(Instant.now(), httpStatus, path, message, errors));
     }
 
 }
